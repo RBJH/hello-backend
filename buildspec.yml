@@ -11,7 +11,7 @@ phases:
       - mv ./kubectl /usr/local/bin/kubectl
       - mkdir ~/.kube
       #- aws eks --region ap-northeast-2 update-kubeconfig --name eks
-      - aws eks update-kubeconfig --name eks-demo-edu033 --region ap-northeast-2
+      - aws eks update-kubeconfig --name eks-demo-edu015 --region ap-northeast-2
       - kubectl get po -n kube-system
   pre_build:
     commands:
@@ -24,14 +24,14 @@ phases:
       #- mvn clean install -Dmaven.test.skip=true
       #- ./gradlew build
       - echo Building the Docker image
-      - docker build -t $IMAGE_REPO_NAME:latest .
+      - docker build -t $IMAGE_REPOSITORY_NAME:latest .
       #- docker tag $IMAGE_REPO_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
-      - docker tag $IMAGE_REPO_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:v$CODEBUILD_BUILD_NUMBER
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:v$CODEBUILD_BUILD_NUMBER
+      - docker tag $IMAGE_REPOSITORY_NAME:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPOSITORY_NAME:v$CODEBUILD_BUILD_NUMBER
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPOSITORY_NAME:v$CODEBUILD_BUILD_NUMBER
 
   post_build:
     commands:
-      - AWS_ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:v$CODEBUILD_BUILD_NUMBER
+      - AWS_ECR_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPOSITORY_NAME:v$CODEBUILD_BUILD_NUMBER
       - DATE='date'
       - echo Build completed on $DATE
       - sed -i.bak 's#AWS_ECR_URI#'"$AWS_ECR_URI"'#' ./hello-deployment.yaml
